@@ -14,9 +14,10 @@ import (
 )
 
 type config struct {
-	PostUrl string   `toml:"postUrl"`
-	DNS     []string `toml:"dns"`
-	Domain  []string
+	PostUrl           string   `toml:"postUrl"`
+	DNS               []string `toml:"dns"`
+	Domain            []string
+	MainChannelNumber int
 }
 
 var (
@@ -31,6 +32,8 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	//设置线程数
+	mainChannel = make(chan int, conf.MainChannelNumber)
 	//设置日志级别
 	SetLogInfo()
 	//循环
@@ -47,6 +50,7 @@ func main() {
 			wg.Add(1)
 			go PostUrl(&v, &conf)
 		}
+		Info("-------------", domain, "--done!------------")
 	}
 
 	//等待完成

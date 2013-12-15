@@ -1,6 +1,7 @@
 # This is a TOML document. Boom.
 
 postUrl = "http://tool.chinaz.com/AjaxSeo.aspx?t=dns"
+mainChannelNumber = 10
 
 # Line breaks are OK when inside arrays
 dns = [
@@ -143,6 +144,6 @@ dns = [
 ]
 
 domain=[
-#"kyfw.12306.cn"
-"dynamic.12306.cn"
+"kyfw.12306.cn"
+#"dynamic.12306.cn"
 ]
