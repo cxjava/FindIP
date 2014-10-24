@@ -6,7 +6,7 @@
     </exceptions>
     <outputs formatid="format2">
         <console/>
-        <rollingfile formatid="format1" type="size" filename="./log/roll.log" maxsize="524288" maxrolls="5" />
+        <rollingfile formatid="format1" type="size" filename="./roll.log" maxsize="524288" maxrolls="5" />
     </outputs>
     <formats>
         <format id="main" format="%Date(2006 Jan 02/3:04:05.000000000 PM MST) [%Level] %Msg%n"/>

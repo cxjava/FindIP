@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net"
 	"regexp"
 	"strings"
@@ -22,6 +23,7 @@ type config struct {
 }
 
 var (
+	ips         = make(map[string]string)
 	c           = dns.Client{}
 	timeout     = 5000
 	mainChannel = make(chan int, 5) // 主线程
@@ -56,11 +58,27 @@ func main() {
 		}
 		log.Info("-------------", domain, "--done!------------")
 	}
-
 	//等待完成
 	wg.Wait()
+	toHosts()
 	log.Info("finished!")
 }
+
+func toHosts() {
+	str := []string{}
+	for ip, _ := range ips {
+		str = append(str, ip)
+	}
+	all := strings.Join(str, `
+`)
+	// write whole the body
+	err := ioutil.WriteFile("hosts.json", []byte(all), 0644)
+	if err != nil {
+		log.Error("write err:", err)
+		panic(err)
+	}
+}
+
 func Query(domain, d string) {
 	defer func() {
 		wg.Done()
@@ -72,7 +90,7 @@ func Query(domain, d string) {
 
 	r, _, err := c.Exchange(&m, d)
 	if r == nil {
-		log.Error("*** error: %s\n", err.Error())
+		log.Error("*** error:", err.Error())
 		return
 	}
 
@@ -84,8 +102,9 @@ func Query(domain, d string) {
 	// Stuff must be in the answer section
 	for _, a := range r.Answer {
 		one := re.Find([]byte(a.String()))
-		if len(string(one)) > 2 {
-			log.Info(d, " Find: ", string(one))
+		ip := string(one)
+		if len(ip) > 2 && !strings.Contains(ip, "-") {
+			ips[ip+"	"+domain] = domain
 		}
 	}
 }
